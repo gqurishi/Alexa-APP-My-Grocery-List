@@ -3,7 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Trash2, RefreshCw, GripVertical } from 'lucide-react';
+import { Trash2, RefreshCw } from 'lucide-react';
 
 interface GroceryItem {
   id: string;
@@ -37,21 +37,14 @@ export const SortableItem: React.FC<SortableItemProps> = ({ item, onDelete, isDe
     <Card
       ref={setNodeRef}
       style={style}
-      className={`p-4 bg-white shadow-sm hover:shadow-md transition-shadow duration-200 ${
-        isDragging ? 'opacity-50 z-50' : ''
+      className={`p-4 bg-white shadow-sm hover:shadow-md transition-all duration-200 cursor-grab active:cursor-grabbing ${
+        isDragging ? 'opacity-50 z-50 shadow-lg scale-105' : ''
       }`}
+      {...attributes}
+      {...listeners}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 flex-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="p-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600"
-            {...attributes}
-            {...listeners}
-          >
-            <GripVertical className="h-4 w-4" />
-          </Button>
           <div className="flex-1">
             <h3 className="font-medium text-gray-900">{item.name}</h3>
             {item.quantity && (
@@ -67,9 +60,12 @@ export const SortableItem: React.FC<SortableItemProps> = ({ item, onDelete, isDe
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onDelete(item)}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering drag when clicking delete
+            onDelete(item);
+          }}
           disabled={isDeleting}
-          className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2"
+          className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 cursor-pointer"
           title="Delete item"
         >
           {isDeleting ? (
